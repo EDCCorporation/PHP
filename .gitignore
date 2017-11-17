@@ -1,0 +1,6 @@
+# Build results
+build/
+releases/
+
+# Windows Files
+desktop.ini
