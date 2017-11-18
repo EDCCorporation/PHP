@@ -210,49 +210,6 @@ function UploadToFTPSite {
 if (-not $publish) { Write-Host -ForegroundColor Yellow "Skipping upload of installer to EDC Website"
 } else { UploadToFTPSite }
 #endregion
-function UploadChangeLogs {
-
-    # Prep the login header for all JSON headings
-    $login_token_bytes = [System.Text.Encoding]::ASCII.GetBytes($zendesk_login_token)
-    $login_token_base64 = [System.Convert]::ToBase64String($login_token_bytes)
-    $headers = @{ Authorization = "Basic $login_token_base64" }
-
-    # Load the new content for the changelog KB article
-    $new_content = [IO.File]::ReadAllText($script:changelog_filename)
-    $new_content = $new_content.Replace("`r`n", "<br/>").Replace("`n", "<br/>");
-
-    # Load all exiting articles, and check for if the article already exists
-    $found = $false
-    $articles_http_response = Invoke-WebRequest -Uri $kb_articles_url -Headers $headers 
-    $articles_json = $articles_http_response.Content | ConvertFrom-Json
-
-    foreach ($article in $articles_json.articles) {
-        if($article.name -match $script:knowledge_base_title) {
-
-            # Get the article id
-            $article_id = $article.id
-
-            # Update the existing article using the ZenDesk "translation" command
-            Invoke-WebRequest `
-                -Uri "https://edchelp.zendesk.com/api/v2/help_center/articles/$article_id/translations/en-us.json" `
-                -Headers $headers -Method PUT `
-                -Body ('{"translation": {"body": ' + ($new_content | ConvertTo-Json) + ' }}') `
-                -ContentType "application/json" | Out-Null
-        
-            $found = $true
-            break
-        }
-    }
- 
-     if(!$found){
-        # Create a new article
-        $new_article_cmd = '{"article":{"title": '+ ($script:knowledge_base_title | ConvertTo-Json) +' , "body": ' + ($new_content | ConvertTo-Json) + ' , "locale": "en-us"}}'
-        Invoke-WebRequest -Uri $kb_articles_url -Headers $headers -Method POST -Body $new_article_cmd -ContentType "application/json" | Out-Null
-     }
-}
-if (-not $publish) { Write-Host -ForegroundColor Yellow "Skipping uploading change logs to the knowlegebase"
-} else { UploadChangeLogs }
-#endregion
 
 #region Display build complete message
 
