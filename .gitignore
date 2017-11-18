@@ -1,6 +1,6 @@
 # Build results
-build/
 releases/
+source/
 
 # Windows Files
 desktop.ini
