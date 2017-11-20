@@ -144,16 +144,29 @@ GetPHPVersion
 #endregion
 
 #region Check to see if our output file already exists
-if(Test-Path  (Join-Path (Get-Location) "releases\$script:php_major\php-$script:php_version-x64-EDC-Setup.exe")) {
-	Write-Host -ForegroundColor Green "Current PHP installer already exists, no need to build a new one"
-	exit
+function CheckIfInstallerExists {
+	if(Test-Path  (Join-Path (Get-Location) "releases\$script:php_major\php-$script:php_version-x64-EDC-Setup.exe")) {
+		Write-Host -ForegroundColor Green "Current PHP installer already exists, no need to build a new one"
+		exit
+	}
 }
+if(-not $embedded) { CheckIfInstallerExists }
+#endregion
+
+#region Ensure the "source" directory exists
+function EnsureSourceDirectoryExists {
+	Write-Verbose "Creating the PHP source directory (if it doesn't exist)"	
+	if (-Not (Test-Path "source")) {
+        New-Item "source" -type directory
+    }
+}
+EnsureSourceDirectoryExists
 #endregion
 
 #region Download the latest version of PHP
 function DownloadPHP {
-	Write-Verbose "Deleting the existing PHP installation"
-	Remove-Item -Recurse "source\*"
+	Write-Verbose "Deleting the existing PHP installation"	
+	Remove-Item -Recurse "source\*"	
 	
 	$url = "http://windows.php.net/downloads/releases/php-$script:php_version-nts-Win32-VC14-x64.zip"
 	Write-Host -ForegroundColor Green "Downloading $url"
@@ -172,19 +185,31 @@ function DownloadPHP {
 DownloadPHP
 #endregion
 
+#region Ensure the "releases" directory exists
+function EnsureReleasesDirectoryExists {
+	Write-Verbose "Creating the PHP releases directory (if it doesn't exist)"	
+	if (-Not (Test-Path "releases")) {
+        New-Item "releases" -type directory
+    }
+	if (-Not (Test-Path "releases/$script:php_major")) {
+		New-Item "releases/$script:php_major" -type directory
+	}
+}
+EnsureSourceDirectoryExists
+#endregion
+
 #region Build the installer
 function BuildInstaller {
 	Write-Host -ForegroundColor Green "Building PHP Installer"
     
-    $aims9source = Get-Location
-
-    $arguments = @("/dSOURCE=" + (Get-Location))
-    $arguments += "/dVERSION=$script:php_version"
+    $arguments = @("/dPHP_SOURCE=" + (Get-Location))
+    $arguments += "/dPHP_VERSION=$script:php_version"
     $arguments += "/V1"
     $arguments += (Join-Path (Get-Location) "scripts/Installer.nsi")
     Start-Process $makensis -NoNewWindow -Wait -ArgumentList $arguments
 }
 if(-not $embedded) { BuildInstaller }
+#endregion
 
 #region Prompt for upload of the build
 $publish = $false
