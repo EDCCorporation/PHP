@@ -71,8 +71,8 @@ InstallDirRegKey HKLM "${PHP_REGKEY}" Path
 InstType "Everything"
 InstType "Base PHP Only"
 InstType "AIMS 9 Only"
-InstType "AIMS Web 8.x Only"
 InstType "AIMS Web 9.x Only"
+InstType "AIMS Web 8.x Only"
 
 # installer
 !insertmacro MUI_PAGE_COMPONENTS
@@ -101,14 +101,14 @@ Section /o "AIMS 9 Support" SEC_PHP_AIMS_9
 	!include "includes\SEC_PHP_AIMS_9.nsi"	
 SectionEnd
 
-Section /o "AIMS Web 8.x Support" SEC_PHP_AIMS_WEB_8
+Section /o "AIMS Web 9.x Support" SEC_PHP_AIMS_WEB_9
     SectionIn 1 4
-	!include "includes\SEC_PHP_AIMS_WEB_8.nsi"
+	!include "includes\SEC_PHP_AIMS_WEB_9.nsi"
 SectionEnd
 
-Section /o "AIMS Web 9.x Support" SEC_PHP_AIMS_WEB_9
+Section /o "AIMS Web 8.x Support" SEC_PHP_AIMS_WEB_8
     SectionIn 1 5
-	!include "includes\SEC_PHP_AIMS_WEB_9.nsi"
+	!include "includes\SEC_PHP_AIMS_WEB_8.nsi"
 SectionEnd
 
 Section -post  
