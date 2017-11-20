@@ -91,7 +91,7 @@ Section -pre
 	!include "includes\PRE.nsi"
 SectionEnd
 
-Section "Base PHP" SEC_PHP
+Section "PHP ${PHP_VERSION}" SEC_PHP
     SectionIn 1 2 3 4 5 RO
 	!include "includes\SEC_PHP.nsi"	
 SectionEnd

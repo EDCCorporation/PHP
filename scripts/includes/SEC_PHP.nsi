@@ -1,4 +1,4 @@
-DetailPrint "Installing Base PHP Build"	
+DetailPrint "Installing PHP ${PHP_VERSION} Build"	
 SetOutPath $PHPDIR
 SetOverwrite on
 
