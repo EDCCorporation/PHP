@@ -1,0 +1,1 @@
+!define PHP_REGKEY "SOFTWARE\EDC_PHP_Installer"
