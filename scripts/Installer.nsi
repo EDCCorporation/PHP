@@ -84,10 +84,8 @@ InstType "AIMS Web 8.x Only"
 #########################################################################################
 
 Section -pre
-    SectionIn 1 2 3 4 5
-	
-	StrCpy $PHPDir $INSTDIR
-	
+    SectionIn 1 2 3 4 5	
+	StrCpy $PHPDir $INSTDIR	
 	!include "includes\PRE.nsi"
 SectionEnd
 
@@ -133,6 +131,8 @@ FunctionEnd
 Function .onSelChange
 	!include "includes\OnSelChange.nsi"
 FunctionEnd
+
+!include "includes\FUNCTIONS.nsi"
 
 #########################################################################################
 ## Section Descriptions
