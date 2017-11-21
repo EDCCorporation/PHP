@@ -232,7 +232,10 @@ function UploadToFTPSite {
     $arguments += "www.aimsparking.com:$php_remote_path/php_" + $script:php_major + "_x64/"
     Start-Process $pscp -Wait -ArgumentList $arguments
 }
-if (-not $publish) { Write-Host -ForegroundColor Yellow "Skipping upload of installer to EDC Website"
+if (-not $publish) { 
+	if(-not $embedded) {
+		Write-Host -ForegroundColor Yellow "Skipping upload of installer to EDC Website"
+	}
 } else { UploadToFTPSite }
 #endregion
 
