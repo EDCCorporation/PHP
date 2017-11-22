@@ -13,6 +13,7 @@ File /oname=php.ini "${PHP_SOURCE}\Source\php.ini-production"
 
 # Add common custom ini's	
 SetOutPath "$PHPDIR\php.d"
+File "${PHP_SOURCE}\php.d\php.curl.ini"
 File "${PHP_SOURCE}\php.d\php.iis.ini"
 File "${PHP_SOURCE}\php.d\php.opcache.ini"
 File "${PHP_SOURCE}\php.d\php.paths.ini"
