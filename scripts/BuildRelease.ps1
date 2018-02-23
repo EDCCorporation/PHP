@@ -165,22 +165,34 @@ EnsureSourceDirectoryExists
 
 #region Download the latest version of PHP
 function DownloadPHP {
-	Write-Verbose "Deleting the existing PHP installation"	
-	Remove-Item -Recurse "source\*"	
+	Write-Verbose "Ensuring we have the proper PHP source"
+	if(-Not (Test-Path "downloads")) {
+		New-Item "downloads" -type directory
+	}
 	
-	$url = "http://windows.php.net/downloads/releases/php-$script:php_version-nts-Win32-VC14-x64.zip"
-	Write-Host -ForegroundColor Green "Downloading $url"
-	(New-Object System.Net.WebClient).DownloadFile($url, (Join-Path (Get-Location) "source\php.zip"))
+	$filename = "php-$script:php_version-nts-Win32-VC14-x64.zip"
+	$script:php_source = (Join-Path (Get-Location) "downloads\$filename")
+	if(-Not (Test-Path $script:php_source)) {
+		$url = "http://windows.php.net/downloads/releases/$filename"
+		Write-Host -ForegroundColor Green "Downloading $url"
+		$web_client = New-Object System.Net.WebClient
+		$web_client.Headers.Add("User-Agent", "PowerShell / EDC Build Script");
+		$web_client.DownloadFile($url, $script:php_source)
+	}
 	
+	Write-Verbose "Deleting the existing PHP installation"    
+    Remove-Item -Recurse "source\*"
 	Write-Host -ForegroundColor Green "Extracting php.zip"	
-	.\scripts\unzip.exe -q .\source\php.zip -d .\source	
-	
-	Remove-Item "source\php.zip"
+	.\scripts\unzip.exe -q ($script:php_source) -d .\source		
 		
+	#region Download the latest version of Mozilla's CA Cert's file for inclusion in our PHP release
 	$url = "https://curl.haxx.se/ca/cacert.pem"
 	Write-Host -ForegroundColor Green "Downloading $url"
 	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-	(New-Object System.Net.WebClient).DownloadFile($url, (Join-Path (Get-Location) "source\cacert.pem"))
+	$web_client = New-Object System.Net.WebClient
+	$web_client.Headers.Add("User-Agent", "PowerShell / EDC Build Script");
+	$web_client.DownloadFile($url, (Join-Path (Get-Location) "source\cacert.pem"))
+	#endregion
 }
 DownloadPHP
 #endregion
