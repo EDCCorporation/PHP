@@ -1,3 +1,8 @@
+DetailPrint "Installing the Microsoft Visual C++ Redistributable for Visual Studio 2015 (VC14)"
+SetOutPath $pluginsdir
+File "${PHP_SOURCE}\downloads\vc_redist.x64.exe"
+ExecWait "$pluginsdir\vc_redist.x64.exe /install /quiet /norestart"
+
 DetailPrint "Installing PHP ${PHP_VERSION} Build"	
 SetOutPath $PHPDIR
 SetOverwrite on

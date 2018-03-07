@@ -193,6 +193,17 @@ function DownloadPHP {
 	$web_client.Headers.Add("User-Agent", "PowerShell / EDC Build Script");
 	$web_client.DownloadFile($url, (Join-Path (Get-Location) "source\cacert.pem"))
 	#endregion
+	
+	#region Download the latest version of the VC14 redistributable
+	$filename = (Join-Path (Get-Location) "downloads\vc_redist.x64.exe")
+	if(-Not (Test-Path $filename)) {
+		$url = 'https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe'
+		Write-Host -ForegroundColor Green "Downloading $url"
+		$web_client = New-Object System.Net.WebClient
+		$web_client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
+		$web_client.DownloadFile($url, $filename)
+	}
+	#endregion
 }
 DownloadPHP
 #endregion
