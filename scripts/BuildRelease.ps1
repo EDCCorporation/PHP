@@ -176,7 +176,7 @@ function DownloadPHP {
 		$url = "http://windows.php.net/downloads/releases/$filename"
 		Write-Host -ForegroundColor Green "Downloading $url"
 		$web_client = New-Object System.Net.WebClient
-		$web_client.Headers.Add("User-Agent", "PowerShell / EDC Build Script");
+		$web_client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
 		$web_client.DownloadFile($url, $script:php_source)
 	}
 	
