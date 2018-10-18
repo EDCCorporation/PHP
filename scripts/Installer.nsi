@@ -26,7 +26,7 @@
 
 Name ${NAME}
 InstallDir "c:\PHP"
-OutFile "${PHP_SOURCE}\releases\7.1\php-${PHP_VERSION}-x64-EDC-Setup.exe"
+OutFile "${PHP_SOURCE}\releases\7.2\php-${PHP_VERSION}-x64-EDC-Setup.exe"
 
 !include "includes\CONSTANTS.nsi"
 
