@@ -176,15 +176,6 @@ function DownloadPHP {
 		$url = "https://windows.php.net/downloads/releases/$filename"
 		Write-Host -ForegroundColor Green "Downloading $url"
 		$web_client = New-Object System.Net.WebClient
-		#$web_client.Headers.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
-		#$web_client.Headers.Add("Accept-Encoding", "gzip, deflate, br");
-		#$web_client.Headers.Add("Accept-Language", "en-US,en;q=0.9");
-		#$web_client.Headers.Add("Connection", "keep-alive");		
-		#$web_client.Headers.Add("Cookie", "LAST_LANG=en; COUNTRY=NA%2C216.171.176.122");
-		#$web_client.Headers.Add("Host", "windows.php.net");
-		#$web_client.Headers.Add("Referer", "https://windows.php.net/download/");
-		#$web_client.Headers.Add("Upgrade-Insecure-Requests", "1");
-		#$web_client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
 		$web_client.Headers.Add("User-Agent", "PowerShell / EDC Build Script");
 		$web_client.DownloadFile($url, $script:php_source)
 	}
