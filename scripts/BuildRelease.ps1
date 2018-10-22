@@ -170,6 +170,8 @@ function DownloadPHP {
 		New-Item "downloads" -type directory
 	}
 	
+	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+	
 	$filename = "php-$script:php_version-nts-Win32-VC15-x64.zip"
 	$php_source = (Join-Path (Get-Location) "downloads\$filename")
 	if(-Not (Test-Path $php_source)) {
