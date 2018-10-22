@@ -171,19 +171,19 @@ function DownloadPHP {
 	}
 	
 	$filename = "php-$script:php_version-nts-Win32-VC15-x64.zip"
-	$script:php_source = (Join-Path (Get-Location) "downloads\$filename")
-	if(-Not (Test-Path $script:php_source)) {
+	$php_source = (Join-Path (Get-Location) "downloads\$filename")
+	if(-Not (Test-Path $php_source)) {
 		$url = "https://windows.php.net/downloads/releases/$filename"
 		Write-Host -ForegroundColor Green "Downloading $url"
 		$web_client = New-Object System.Net.WebClient
 		$web_client.Headers.Add("User-Agent", "PowerShell / EDC Build Script");
-		$web_client.DownloadFile($url, $script:php_source)
+		$web_client.DownloadFile($url, $php_source)
 	}
 	
 	Write-Verbose "Deleting the existing PHP installation"    
     Remove-Item -Recurse "source\*"
 	Write-Host -ForegroundColor Green "Extracting php.zip"	
-	.\scripts\unzip.exe -q ($script:php_source) -d .\source		
+	.\scripts\unzip.exe -q ($php_source) -d .\source		
 		
 	#region Download the latest version of Mozilla's CA Cert's file for inclusion in our PHP release
 	$url = "https://curl.haxx.se/ca/cacert.pem"
