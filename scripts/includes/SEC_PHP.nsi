@@ -41,3 +41,11 @@ CreateDirectory "$PHPDIR\sessions"
 # Set the permissions on the sessions directory
 AccessControl::GrantOnFile "$PHPDIR\sessions" "IUSR" "GenericRead + GenericExecute + GenericWrite + Delete + ListDirectory"
 AccessControl::GrantOnFile "$PHPDIR\sessions" "IIS_IUSRS" "GenericRead + GenericExecute + GenericWrite + Delete + ListDirectory"
+
+# Delete the wincache files if they exist (as we're no longer using them)
+${If} ${FileExists} "$PHPDir\php.d\php.wincache.ini"
+	Delete "$PHPDir\php.d\php.wincache.ini"
+${EndIf}
+${If} ${FileExists} "$PHPDir\ext\php_wincache.dll"
+	Delete "$PHPDir\ext\php_wincache.dll"
+${EndIf}

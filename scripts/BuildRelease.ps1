@@ -67,7 +67,7 @@ function InitGitHubSSL {
     # Normalize the $env:Path variable, so it doesn't grow with extra executions
     $env:Path = (($env:Path -split ';' | select -Unique) -join ';')
 }
-if ($embedded) { 
+if ($embedded -or $test) { 
 	$skip_dir_check = $true
 } else {
 	InitGitHubSSL 
@@ -170,13 +170,13 @@ function DownloadPHP {
 		New-Item "downloads" -type directory
 	}
 	
-	$filename = "php-$script:php_version-nts-Win32-VC14-x64.zip"
+	$filename = "php-$script:php_version-nts-Win32-VC15-x64.zip"
 	$script:php_source = (Join-Path (Get-Location) "downloads\$filename")
 	if(-Not (Test-Path $script:php_source)) {
-		$url = "http://windows.php.net/downloads/releases/$filename"
+		$url = "https://windows.php.net/downloads/releases/$filename"
 		Write-Host -ForegroundColor Green "Downloading $url"
 		$web_client = New-Object System.Net.WebClient
-		$web_client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
+		$web_client.Headers.Add("User-Agent", "PowerShell / EDC Build Script");
 		$web_client.DownloadFile($url, $script:php_source)
 	}
 	
@@ -194,15 +194,13 @@ function DownloadPHP {
 	$web_client.DownloadFile($url, (Join-Path (Get-Location) "source\cacert.pem"))
 	#endregion
 	
-	#region Download the latest version of the VC14 redistributable
+	#region Download the latest version of the VC15 redistributable
 	$filename = (Join-Path (Get-Location) "downloads\vc_redist.x64.exe")
-	if(-Not (Test-Path $filename)) {
-		$url = 'https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe'
-		Write-Host -ForegroundColor Green "Downloading $url"
-		$web_client = New-Object System.Net.WebClient
-		$web_client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
-		$web_client.DownloadFile($url, $filename)
-	}
+	$url = 'https://aka.ms/vs/15/release/VC_redist.x64.exe'
+	Write-Host -ForegroundColor Green "Downloading $url"
+	$web_client = New-Object System.Net.WebClient
+	$web_client.Headers.Add("User-Agent", "PowerShell / EDC Build Script");
+	$web_client.DownloadFile($url, $filename)
 	#endregion
 }
 DownloadPHP
@@ -218,7 +216,7 @@ function EnsureReleasesDirectoryExists {
 		New-Item "releases/$script:php_major" -type directory
 	}
 }
-EnsureSourceDirectoryExists
+EnsureReleasesDirectoryExists
 #endregion
 
 #region Build the installer
@@ -236,7 +234,7 @@ if(-not $embedded) { BuildInstaller }
 
 #region Prompt for upload of the build
 $publish = $false
-if(-not $embedded) {
+if((-not $embedded) -and (-not $test)){
     Write-Host -ForegroundColor Yellow -NoNewLine "Would you like to publish this build to the EDC Website? (y/n): "
     $publish = Read-Host
     if($publish -eq "y") { $publish = $true } else { $publish = $false }
