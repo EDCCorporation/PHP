@@ -21,11 +21,11 @@ Param(
     [switch]$test = $false,
     # Change this line to = $true if you want to run this script in an alternative directory
     [switch]$skip_dir_check = $false,
-	# Change this switch to = $true for when this script is being run by a parent project (AIMS 9, AIMS Web 9, etc)
-	[switch]$embedded = $false,
+    # Change this switch to = $true for when this script is being run by a parent project (AIMS 9, AIMS Web 9, etc)
+    [switch]$embedded = $false,
 
     # File Paths
-	[string]$makensis = (Join-Path -Path ${env:ProgramFiles(x86)} -ChildPath "NSIS\makensis.exe"),
+    [string]$makensis = (Join-Path -Path ${env:ProgramFiles(x86)} -ChildPath "NSIS\makensis.exe"),
     [string]$pscp = (Join-Path -Path ${env:ProgramFiles} -ChildPath "PuTTY\pscp.exe"),
 
     # Remote server paths
@@ -46,32 +46,6 @@ function GetSystemAttributes {
     }
 }
 GetSystemAttributes
-#endregion
-
-#region Initialize a GitHub SSL session
-function InitGitHubSSL {
-    Write-Host -ForegroundColor Green "Initializing GitHub SSL session"
-
-    # Get the current ExecutionPolicy
-    $OriginalExecutionPolicy = Invoke-Command -ScriptBlock { Get-ExecutionPolicy -Scope Process }
-
-    # Enable running non-signed scripts for this process only
-    Set-ExecutionPolicy RemoteSigned -Scope Process -Force
-
-    # Run the GitHub-provided shell script
-    & (Join-Path ($env:LOCALAPPDATA + "\GitHub") "shell.ps1")
-
-    # Restore the original ExecutionPolicy
-    Set-ExecutionPolicy $OriginalExecutionPolicy -Scope Process -Force
-
-    # Normalize the $env:Path variable, so it doesn't grow with extra executions
-    $env:Path = (($env:Path -split ';' | select -Unique) -join ';')
-}
-if ($embedded -or $test) { 
-	$skip_dir_check = $true
-} else {
-	InitGitHubSSL 
-}
 #endregion
 
 #region Ensure we're in the repository root directory
