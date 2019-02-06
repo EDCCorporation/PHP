@@ -36,6 +36,11 @@ ${If} $PHPTimeZone != ""
 	FileClose $0
 ${EndIf}
 
+# Write the zz_custom file (if it doesn't already exist)
+${IfNot} ${FileExists} "$PHPDir\php.d\php.zz_custom.ini"
+	File "${PHP_SOURCE}\php.d\php.zz_custom.ini"
+${EndIf}
+
 # Make sure the sessions directory exists
 CreateDirectory "$PHPDIR\sessions"			
 # Set the permissions on the sessions directory
