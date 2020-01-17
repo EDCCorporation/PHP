@@ -56,7 +56,7 @@ function CheckCorrectDirectory {
 
     $output = Invoke-Expression "git remote -v"
     if (($LASTEXITCODE -ne 0) -or
-        ($output -notmatch 'origin\s+EDCCorporation/PHP.git')) {
+        ($output -notmatch 'EDCCorporation/PHP.git')) {
         Write-Host -ForegroundColor Red "You must run this script from within the context of the proper php repository"
         exit 1
     }
