@@ -221,16 +221,16 @@ if((-not $embedded) -and (-not $test)){
 
 #region Upload the installers to the EDC website
 function UploadToFTPSite {
-
 	Write-Host -ForegroundColor Green "Uploading to S3 bucket (us-east-1)"
 	Write-S3Object -Region us-east-1 -BucketName "ftp.aimsparking.com" `
-		-Key "pub/php/php_$script:php_major_x64/AIMSWeb.$script:new_version_num.exe" `
-		-File (Join-Path (Get-Location) "releases\$script:php_major\php-$script:php_version-x64-EDC-Setup.exe") `
+		-Key "pub/php/php_$($script:php_major)_x64/php-$($script:php_version)-x64-EDC-Setup.exe" `
+		-File (Join-Path (Get-Location) "releases\$($script:php_major)\php-$($script:php_version)-x64-EDC-Setup.exe") `
 		-StorageClass Standard_IA -Metadata @{"mode"="33188"}
 	
 	Write-Host -ForegroundColor Green "Uploading to ftp.aimsparking.com"
-	&$scp (Join-Path (Get-Location) "releases\$script:php_major\php-$script:php_version-x64-EDC-Setup.exe") "edc@ftp.aimsparking.com:$php_remote_path/php_" + $script:php_major + "_x64/"
+	&$scp (Join-Path (Get-Location) "releases\$($script:php_major)\php-$($script:php_version)-x64-EDC-Setup.exe") "edc@ftp.aimsparking.com:$($php_remote_path)/php_$($script:php_major)_x64/"
 }
+
 if (-not $publish) { 
 	if(-not $embedded) {
 		Write-Host -ForegroundColor Yellow "Skipping upload of installer to EDC Website"
