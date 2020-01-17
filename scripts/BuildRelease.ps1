@@ -26,7 +26,9 @@ Param(
 
     # File Paths
     [string]$makensis = (Join-Path -Path ${env:ProgramFiles(x86)} -ChildPath "NSIS\makensis.exe"),
-    [string]$pscp = (Join-Path -Path ${env:ProgramFiles} -ChildPath "PuTTY\pscp.exe"),
+    [string]$grep = (Join-Path -Path ${env:ProgramW6432} -ChildPath "Git\usr\bin\grep.exe"),
+	[string]$tail = (Join-Path -Path ${env:ProgramW6432} -ChildPath "Git\usr\bin\tail.exe"),
+	[string]$scp = (Join-Path -Path ${env:SystemRoot} -ChildPath "System32\OpenSSH\scp.exe"),
 
     # Remote server paths
     [string]$php_remote_path = "/home/ftp/pub/php",
@@ -219,15 +221,15 @@ if((-not $embedded) -and (-not $test)){
 
 #region Upload the installers to the EDC website
 function UploadToFTPSite {
-    Write-Host -ForegroundColor Green "Uploading PHP Installer $script:php_version to the EDC Website"
-    Write-Host -ForegroundColor Green "Upload directory set to $php_remote_path"
 
-    $arguments = @("-scp")
-    $arguments += @("-l", "edc")
-    $arguments += @("-i", $private_key_file)
-    $arguments += (Join-Path (Get-Location) "releases\$script:php_major\php-$script:php_version-x64-EDC-Setup.exe")
-    $arguments += "www.aimsparking.com:$php_remote_path/php_" + $script:php_major + "_x64/"
-    Start-Process $pscp -Wait -ArgumentList $arguments
+	Write-Host -ForegroundColor Green "Uploading to S3 bucket (us-east-1)"
+	Write-S3Object -Region us-east-1 -BucketName "ftp.aimsparking.com" `
+		-Key "pub/php/php_$script:php_major_x64/AIMSWeb.$script:new_version_num.exe" `
+		-File (Join-Path (Get-Location) "releases\$script:php_major\php-$script:php_version-x64-EDC-Setup.exe") `
+		-StorageClass Standard_IA -Metadata @{"mode"="33188"}
+	
+	Write-Host -ForegroundColor Green "Uploading to ftp.aimsparking.com"
+	&$scp (Join-Path (Get-Location) "releases\$script:php_major\php-$script:php_version-x64-EDC-Setup.exe") "edc@ftp.aimsparking.com:$php_remote_path/php_" + $script:php_major + "_x64/"
 }
 if (-not $publish) { 
 	if(-not $embedded) {
