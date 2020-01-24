@@ -139,6 +139,23 @@ function EnsureSourceDirectoryExists {
 EnsureSourceDirectoryExists
 #endregion
 
+function DownloadFile ($destination, $url) {
+	if(Test-Path $destination) {
+		Write-Host -ForegroundColor Green "File $destination already exists, no download required";
+	} else {
+		try {
+			Write-Host -ForegroundColor Green "Downloading $url"
+			$web_client = New-Object System.Net.WebClient
+			$web_client.Headers.Add("User-Agent", "PowerShell / EDC Build Script");
+			$web_client.DownloadFile($url, $destination)
+		} catch [System.Net.WebException] {
+			return $False;
+		}
+	}
+	
+	return $True;
+}
+
 #region Download the latest version of PHP
 function DownloadPHP {
 	Write-Verbose "Ensuring we have the proper PHP source"
@@ -150,12 +167,16 @@ function DownloadPHP {
 	
 	$filename = "php-$script:php_version-nts-Win32-VC15-x64.zip"
 	$php_source = (Join-Path (Get-Location) "downloads\$filename")
-	if(-Not (Test-Path $php_source)) {
-		$url = "https://windows.php.net/downloads/releases/$filename"
-		Write-Host -ForegroundColor Green "Downloading $url"
-		$web_client = New-Object System.Net.WebClient
-		$web_client.Headers.Add("User-Agent", "PowerShell / EDC Build Script");
-		$web_client.DownloadFile($url, $php_source)
+	$url = "https://windows.php.net/downloads/releases/$filename"
+	if(!(DownloadFile $php_source $url)) {
+		Write-Host -ForegroundColor Yellow "Download of $url failed, trying archives folder"
+		$url = "https://windows.php.net/downloads/releases/archives/$filename"
+		if(DownloadFile $php_source $url) {
+			Write-Host -ForegroundColor Green "Download of $url successful"
+		} else {
+			Write-Host -ForegroundColor Red "Download of $url failed"
+			exit
+		}
 	}
 	
 	Write-Verbose "Deleting the existing PHP installation"    
