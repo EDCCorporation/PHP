@@ -248,8 +248,8 @@ function UploadToFTPSite {
 		-File (Join-Path (Get-Location) "releases\$($script:php_major)\php-$($script:php_version)-x64-EDC-Setup.exe") `
 		-StorageClass Standard_IA -Metadata @{"mode"="33188"}
 	
-	Write-Host -ForegroundColor Green "Uploading to ftp.aimsparking.com"
-	&$scp (Join-Path (Get-Location) "releases\$($script:php_major)\php-$($script:php_version)-x64-EDC-Setup.exe") "edc@ftp.aimsparking.com:$($php_remote_path)/php_$($script:php_major)_x64/"
+	Write-Host -ForegroundColor Green "Uploading to www.aimsparking.com"
+	&$scp (Join-Path (Get-Location) "releases\$($script:php_major)\php-$($script:php_version)-x64-EDC-Setup.exe") "edc@www.aimsparking.com:$($php_remote_path)/php_$($script:php_major)_x64/"
 }
 
 if (-not $publish) { 
