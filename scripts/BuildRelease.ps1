@@ -223,6 +223,7 @@ function BuildInstaller {
 	Write-Host -ForegroundColor Green "Building PHP Installer"
     
     $arguments = @("/dPHP_SOURCE=" + (Get-Location))
+	$arguments += "/dPHP_OUT_FOLDER=" + (Join-Path (Get-Location) "releases/$script:php_major")
     $arguments += "/dPHP_VERSION=$script:php_version"
     $arguments += "/V1"
     $arguments += (Join-Path (Get-Location) "scripts/Installer.nsi")
